@@ -1,15 +1,18 @@
 'use strict';
 const service = require('../server/service');
 const slackClient = require('../server/slackClient');
+
 const http = require('http');
 const server = http.createServer(service);
 
-const token = 'xxxx'
+const wit_token = 'xxx';
+const witClient = require('../server/witClient')(wit_token);
+
+const slack_token = 'xxxxx'
 const loglevel = 'debug'
-const rtm = slackClient.init(token, loglevel);
+const rtm = slackClient.init(slack_token, loglevel, witClient);
 rtm.start();
 
 server.listen(3001, () => {
   console.log('server is running on port', server.address().port);
 });
-

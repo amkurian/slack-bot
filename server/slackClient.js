@@ -2,16 +2,17 @@
 
 const { RTMClient } = require('@slack/client');
 let rtm = null;
+let nlp = null;
 
-
-module.exports.init = function slackClient(token, loglevel){
+module.exports.init = function slackClient(token, loglevel, nlpClient){
   rtm = new RTMClient(token);
+  nlp = nlpClient;
   rtm.on('message', handleOnMessage);
   return rtm;
 }
 
 function handleOnMessage(message){
-  console.log(message.text);
+  nlp.ask(message.text)
   // This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
   return rtm.sendMessage('test', message.channel);
 }
