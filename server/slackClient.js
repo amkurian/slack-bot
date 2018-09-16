@@ -18,21 +18,31 @@ function handleOnMessage(message){
     return
   }
   console.log(res);
-    if (!res.intent){
-      return rtm.sendMessage('Sorry I didnt get you', message.channel);
-    }
-    else if(res.intent[0].value == 'time' && res.location ){
-      return rtm.sendMessage('Time in '+ res.location[0].value, message.channel);
-    }
-    else{
-      console.log(res);
-      return rtm.sendMessage('error', message.channel);
-    }
+  try {
+     if(!res.intent || !res.intent[0] || !res.intent[0].value){
+        console.log(res);
+        throw new Error('Could not extract intent')
+     }
+
+     const intent = require('./intents/' + res.intent[0].value + 'Intent');
+     intent.process(res, function(error, response){
+        if(error){
+          console.log(error.message);
+          return;
+        }
+
+        return rtm.sendMessage(response, message.channel);
+     })
+
+  }
+  catch(err){
+    console.log(err);
+    console.log(res);
+    return rtm.sendMessage('error', message.channel);
+  }
+    // }
   })
-}
-function handleOnAuthenticated(rtmStartData) {
-  console.log(`Logged in as ${rtmStartData.name} of team ${rtmStartData.team.name}, but not yet connected to a channel`);
-}
-// This argument can be a channel ID, a DM ID, a MPDM ID, or a group ID
-const conversationId = 'C1232456';
+     }
+
+
 
