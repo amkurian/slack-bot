@@ -7,7 +7,7 @@ function handleWitRepsonse(res) {
 
 module.exports = function witClient(token) {
   const ask = function ask(message, callback) {
-
+    console.log(message);
     request.get('https://api.wit.ai/message')
       .set('Authorization', 'Bearer ' + token)
       .query({v : '20180531'})
