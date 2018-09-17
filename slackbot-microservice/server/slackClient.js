@@ -3,10 +3,12 @@
 const { RTMClient } = require('@slack/client');
 let rtm = null;
 let nlp = null;
+let registry = null
 
-module.exports.init = function slackClient(token, loglevel, nlpClient){
+module.exports.init = function slackClient(token, loglevel, nlpClient, serviceRegistry){
   rtm = new RTMClient(token);
   nlp = nlpClient;
+  registry = serviceRegistry
   rtm.on('message', handleOnMessage);
   return rtm;
 }
@@ -25,7 +27,7 @@ function handleOnMessage(message){
        }
 
        const intent = require('./intents/' + res.intent[0].value + 'intent');
-       intent.process(res, function(error, response){
+       intent.process(res, registry, function(error, response){
           if(error){
             console.log(error.message);
             return;
